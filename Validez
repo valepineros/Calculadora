@@ -29,12 +29,12 @@ public class Validez {
         return res;
     }
 
-    public static boolean contienePuntosDecimalesValidos(String expresion) {
+    public static boolean contienePuntosDecimalesValidos(String cadena) {
         int puntoCount = 0; // Contador de puntos decimales en el número actual
         boolean dentroNumero = false; // Indica si estamos dentro de un número
         boolean despuesPunto = false; // Indica si el punto decimal ya ha sido encontrado en el número
 
-        for (char c : expresion.toCharArray()) {
+        for (char c : cadena.toCharArray()) {
             if (Character.isDigit(c)) {
                 dentroNumero = true;
             } else if (c == '.') {
@@ -51,6 +51,27 @@ public class Validez {
         }
 
         return true;
+    }
+    
+    public static boolean operadoresValidos (String cadena){
+        boolean res=true;
+        boolean valido=true;
+        
+        for (int i=0; i<cadena.length()-1 && valido; i++){
+            char actual=cadena.charAt(i);
+            char sig=cadena.charAt(i+1);
+            if(esOperador(actual) && esOperador(sig)){
+                valido=false;
+                res=false;
+            }
+                
+        }
+        
+        return res;
+    }
+    
+    private static boolean esOperador(char c){
+        return c =='+' || c =='-' || c =='*' || c =='/';
     }
 
 }
