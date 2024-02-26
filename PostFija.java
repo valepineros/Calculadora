@@ -25,6 +25,10 @@ public class PostFija {
                 StringBuilder operando = new StringBuilder();
                 // Tratamos el dígito o el punto decimal normalmente
                 while (j < operacion.length() && (Character.isDigit(operacion.charAt(j)) || operacion.charAt(j) == '.' || operacion.charAt(j) == '!')) {
+                    if(operacion.charAt(j) == '!'){
+                        operando.append("-");
+                        j++;
+                    }
                     operando.append(operacion.charAt(j));
                     j++;
                 }
