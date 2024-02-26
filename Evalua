@@ -32,21 +32,30 @@ public class Evalua {
     }
 
     private static double operar(double operand1, double operand2, String operador) {
-        // Realiza la operación correspondiente y devuelve el resultado
+        double resultado = 0.0; 
+        
+        // Realizamos la operación correspondiente
         switch (operador) {
             case "+":
-                return operand1 + operand2;
+                resultado = operand1 + operand2;
+                break;
             case "-":
-                return operand1 - operand2;
+                resultado = operand1 - operand2;
+                break;
             case "*":
-                return operand1 * operand2;
+                resultado = operand1 * operand2;
+                break;
             case "/":
-                return operand1 / operand2;
+                resultado = operand1 / operand2;
+                break;
             case "^":
-                return Math.pow(operand1, operand2);
+                resultado = Math.pow(operand1, operand2);
+                break;
             default:
                 throw new IllegalArgumentException("Operador no válido: " + operador);
         }
+        
+        return resultado;
     }
     
 }
