@@ -1,86 +1,151 @@
+import java.util.Arrays;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package calculadora;
-
-import java.util.ArrayList;
 
 /**
  *
- * @author valen
+ * @author bpere
  */
-public class PostFija {
-
-    public static String[] CambiarAPostfija(String operacion) {
-        ArrayList<String> elementos = new ArrayList<>();
-        PilaADT<Character> pilaOp = new PilaA<>();
-
-        for (int i = 0; i < operacion.length(); i++) {
-            char caracter = operacion.charAt(i);
-
-            if (Character.isDigit(caracter) || caracter == '.' || caracter == '!') {
-                // Si es un dígito, un punto decimal o un signo de exclamación, agregamos el operando completo a elementos
-                int j = i;
-                StringBuilder operando = new StringBuilder();
-                // Tratamos el dígito o el punto decimal normalmente
-                while (j < operacion.length() && (Character.isDigit(operacion.charAt(j)) || operacion.charAt(j) == '.' || operacion.charAt(j) == '!')) {
-                    if(operacion.charAt(j) == '!'){
-                        operando.append("-");
+public class ConvPosfija {
+   
+    public static String[] cadenaArr(String cadena) {
+    String[] cadenaArr = new String[cadena.length()]; // Se podría ajustar dependiendo de la longitud final
+    StringBuilder cad = new StringBuilder();
+    int j = 0;
+    
+    for (int i = 0; i < cadena.length(); i++) {
+        char c = cadena.charAt(i);
+        
+        if (c == '(' || c == ')') {
+            if (cad.length() > 0) {
+                cadenaArr[j] = cad.toString();
+                j++;
+                cad.setLength(0);
+            }
+            cadenaArr[j] = String.valueOf(c);
+            j++;
+        } else if (Validez.esOperador(c)) {
+            if (cad.length() > 0) {
+                cadenaArr[j] = cad.toString();
+                j++;
+                cad.setLength(0);
+            }
+            cadenaArr[j] = String.valueOf(c);
+            j++;
+        } else { // Caracteres que no son operadores ni paréntesis
+            cad.append(c);
+        }
+    }
+    
+    // Agregar el último elemento de cad si no está vacío
+    if (cad.length() > 0) {
+        cadenaArr[j] = cad.toString();
+        j++;
+    }
+    
+    // Redimensionar el arreglo al tamaño adecuado
+    return Arrays.copyOf(cadenaArr, j);
+}
+    public static boolean jerarquia(String a, String b){
+        boolean res=false;
+        char ac=a.charAt(0);
+        char ab=b.charAt(0);
+        int acp=0, acb=0;
+        
+        switch(ac){
+            case '^': 
+                acp=4;
+                break;
+            case '*':
+                acp=3;
+                break;
+            case '/': 
+                acp=3;
+                break;
+            case '+': 
+                acp=2;
+                break;
+            case '-': 
+                acp=2;
+                break;
+        }
+        switch(ab){
+            case '^': 
+                acb=4;
+                break;
+            case '*':
+                acb=3;
+                break;
+            case '/': 
+                acb=3;
+                break;
+            case '+': 
+                acb=2;
+                break;
+            case '-': 
+                acb=2;
+                break;
+        }
+        
+        if(acp>acb)
+            res=true;
+        
+        return res;
+    }
+    
+    public static String[] infijaAPostfija(String[] in){
+        String[] post=new String[in.length];
+        PilaADT op=new PilaADT();
+        int i=0, j=0;
+        
+        while(i<in.length && !in[i].isEmpty()){
+            if (in[i].equals("("))
+                op.push(in[i]);
+            else
+                if(in[i].equals(")")){
+                    while(!"(".equals((String)op.peek())){
+                        post[j]=(String)op.pop();
+                        j++;    
+                    }
+                    op.pop();
+                }
+                else
+                    if(!Validez.esOperador(in[i].charAt(0))){
+                        post[j]=in[i];
                         j++;
                     }
-                    operando.append(operacion.charAt(j));
-                    j++;
-                }
-                // Movemos el índice 'i' al final del operando
-                i = j - 1;
-                elementos.add(operando.toString()); // Agregamos el operando al arreglo
-            } else if (caracter == '(') {
-                // Si es un paréntesis de apertura, lo agregamos a la pila de operadores
-                pilaOp.push(caracter);
-            } else if (caracter == ')') {
-                // Si es un paréntesis de cierre, desapilamos los operadores de la pila y los agregamos a elementos
-                while (!pilaOp.isEmpty() && pilaOp.peek() != '(') {
-                    elementos.add(Character.toString(pilaOp.pop()));
-                }
-                // Quitamos el paréntesis de apertura de la pila
-                pilaOp.pop();
-            } else {
-                // Si es un operador, desapilamos los operadores de la pila que tengan mayor o igual precedencia y los agregamos a elementos
-                while (!pilaOp.isEmpty() && precedencia(pilaOp.peek()) >= precedencia(caracter)) {
-                    elementos.add(Character.toString(pilaOp.pop()));
-                }
-                // Agregamos el operador actual a la pila de operadores
-                pilaOp.push(caracter);
-            }
+                    else{
+                        while(!op.isEmpty() && jerarquia((String)op.peek(),in[i])){
+                            post[j]=(String)op.pop();
+                            j++;
+                        }
+                        op.push(in[i]);
+                    }
+            i++;          
         }
-
-        // Desapilamos los operadores restantes de la pila y los agregamos a elementos
-        while (!pilaOp.isEmpty()) {
-            elementos.add(Character.toString(pilaOp.pop()));
+        while(!op.isEmpty()){
+            post[j]=(String)op.pop();
+            j++;
         }
-
-        // Convertimos el ArrayList a un arreglo de strings
-        String[] resultado = new String[elementos.size()];
-        resultado = elementos.toArray(resultado);
-
-        return resultado;
+        return post;
     }
     
-    private static int precedencia(char operador) {
-        switch (operador) {
-            case '+':
-            case '-':
-                return 1;
-            case '*':
-            case '/':
-                return 2;
-            case '^':
-                return 3;
-            default:
-                return 0;
-        } 
+    public static void main(String[] args) {
+      String cadena="2+(5*8+9)";
+      String[] res=cadenaArr(cadena);
+      String[] res2=infijaAPostfija(res);
+      res2=infijaAPostfija(res);
+      /*for (int i=0; i<res.length; i++){
+          System.out.println(res[i]);
+      }*/
+      for (int i=0; i<res2.length; i++){
+          System.out.println(res2[i]);
+      }
+      
+      
+      
     }
-    
-    
 }
