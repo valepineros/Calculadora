@@ -444,37 +444,24 @@ public class CalcGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btNegativoActionPerformed
 
     private void jbIgualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbIgualActionPerformed
-        // TODO add your handling code here:
-        String n; //donde n es lo que el usario ingreso en la calculadora
-        String p[]; //convierte el string a a rreglo de string
-        double resp=0; //es el resultado de la expresion
-        boolean parentesis, decimal, operadores;
-        n=tfResultado.getText();
+        String operacion=tfResultado.getText();
         
-        decimal=Calculadora.contienePuntosDecimalesValidos(n);
-        parentesis=Calculadora.estaBalanceado(n);
-        operadores=Calculadora.operadoresValidos(n);
-        
-        
-        if(decimal && parentesis && operadores) {
-            p=Calculadora.cadenaArr(n);
-            p=Calculadora.infijaAPostfija(p);
-            resp=Calculadora.evaluarPostfija(p);
-            
-            tfResultado.setText(resp+"");
- 
+        if(Calculadora.contienePuntosDecimalesValidos(operacion) && Calculadora.estaBalanceado(operacion) && Calculadora.operadoresValidos(operacion)){
+            String[] p=Calculadora.cadenaArr(operacion);
+            String[] p2=Calculadora.infijaAPostfija(p);
+            double res=Calculadora.evaluarPostfija(p2);
+            tfResultado.setText(String.valueOf(res));
         }
-        else {
-            tfResultado.setText("Error");
-        }
-        
-        
+        else{
+            tfResultado.setText("ERROR");
+        }   
     }//GEN-LAST:event_jbIgualActionPerformed
 
+    public static void main(String args[]) {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+   
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
