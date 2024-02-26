@@ -1,0 +1,52 @@
+public class Evalua {
+    public static double evaluarPostfija(String[] expresion) {
+        PilaADT <Double> pila = new PilaA();
+
+        for (int i = 0; i < expresion.length; i++) {
+            String token = expresion[i];
+            if (esOperando(token)) {
+                // Si es un operando, lo agregamos a la pila convertido a double
+                pila.push(Double.parseDouble(token));
+            } else {
+                // Si es un operador, realizamos la operación correspondiente
+                double operand2 = pila.pop();
+                double operand1 = pila.pop();
+                double resultado = operar(operand1, operand2, token);
+                // Agregamos el resultado de la operación a la pila
+                pila.push(resultado);
+            }
+        }
+
+        // El resultado final estará en la cima de la pila
+        return pila.pop();
+    }
+
+    private static boolean esOperando(String token) {
+        // Verifica si el token es un operando (número)
+        try {
+            Double.parseDouble(token);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private static double operar(double operand1, double operand2, String operador) {
+        // Realiza la operación correspondiente y devuelve el resultado
+        switch (operador) {
+            case "+":
+                return operand1 + operand2;
+            case "-":
+                return operand1 - operand2;
+            case "*":
+                return operand1 * operand2;
+            case "/":
+                return operand1 / operand2;
+            case "^":
+                return Math.pow(operand1, operand2);
+            default:
+                throw new IllegalArgumentException("Operador no válido: " + operador);
+        }
+    }
+    
+}
